@@ -2,25 +2,40 @@ import React from 'react';
 import './App.css';
 import io from 'socket.io-client'
 import { Button } from '@material-ui/core'
+import { createChart } from 'lightweight-charts';
+
 
 class App extends React.Component {
 
   constructor(props) {
     super(props);
+    this.chart = React.createRef()
     this.state = {
       isConnected: false,
+      update: [],
+      buy: [],
+      sell: [],
+      exchanges: [],
+      stocks: [],
     };
+    
+    // this.lineSeries = [];
 
     this.handleConnectClick = this.handleConnectClick.bind(this);
     this.handleDisconnectClick = this.handleDisconnectClick.bind(this);
   }
-
+  
   componentWillUnmount() {
     clearInterval(this.timerID);
   }
-
+  
   componentDidMount() {
-    // cosas
+    const chart = createChart(this.chart.current, { width: 400, height: 300 });
+    this.lineSeries = chart.addLineSeries(); 
+  }
+
+  componentDidUpdate() {
+    this.lineSeries.setData(this.state.update);
   }
   
   handleConnectClick() {
@@ -37,16 +52,17 @@ class App extends React.Component {
   }
 
   connectSockets = () => {
-    this.socket.on('UPDATE', data => console.log(data))
-    this.socket.on('BUY', data => console.log(data))
-    this.socket.on('SELL', data => console.log(data))
-    this.socket.on('EXCHANGES', data => console.log(data))
-    this.socket.on('STOCKS', data => console.log(data))
+    this.socket.on('UPDATE', data => this.setState((prevState) => ({ update: [...prevState.update, data] })))
+    this.socket.on('BUY', data => this.setState((prevState) => ({ buy: [...prevState.buy, data] })))
+    this.socket.on('SELL', data => this.setState((prevState) => ({ sell: [...prevState.sell, data] })))
+    this.socket.on('EXCHANGES', data => this.setState((prevState) => ({ exchanges: [...prevState.exchanges, data] })))
+    this.socket.on('STOCKS', data => this.setState((prevState) => ({ stocks: [...prevState.stocks, data] })))
   }
 
   render() {
     
     const isConnected = this.state.isConnected;
+
 
     return (
       <div>
@@ -60,7 +76,8 @@ class App extends React.Component {
             Desconectar
           </Button>
         }
-        
+        {this.state.update.length && <p>{this.state.update[this.state.update.length - 1].value}</p>}
+        <div ref={this.chart} />
       </div>
     );
 }

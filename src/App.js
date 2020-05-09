@@ -18,6 +18,7 @@ class App extends React.Component {
       sell: [],
       exchanges: [],
       stocks: [],
+      selectedStock: null
     };
     
     // this.lineSeries = [];
@@ -36,7 +37,11 @@ class App extends React.Component {
   }
 
   componentDidUpdate() {
-    this.lineSeries.setData(this.state.update);
+    let { update, selectedStock } = this.state;
+    if (selectedStock) {
+      let actualStock = update.filter((stock) => stock.ticker === selectedStock.ticker)
+      this.lineSeries.setData(actualStock);
+    }
   }
   
   handleConnectClick() {
@@ -87,6 +92,9 @@ class App extends React.Component {
           getOptionLabel={(option) => option.ticker}
           style={{ width: 300 }}
           renderInput={(params) => <TextField {...params} label="Stocks" variant="outlined" />}
+          onChange={(event, newValue) => {
+            this.setState({selectedStock: newValue});
+          }}
         />
         <div ref={this.chart} />
       </div>

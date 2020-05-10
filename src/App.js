@@ -2,7 +2,8 @@ import React from 'react';
 import './App.css';
 import io from 'socket.io-client'
 import { Autocomplete } from '@material-ui/lab';
-import { Button, TextField } from '@material-ui/core'
+import { Button, TextField, Paper, Table, TableContainer, TableCell, TableRow } from '@material-ui/core'
+import StockTable from './StockTable'
 import { createChart } from 'lightweight-charts';
 
 
@@ -18,7 +19,8 @@ class App extends React.Component {
       sell: [],
       exchanges: [],
       stocks: [],
-      selectedStock: null
+      // currentStockData: [],
+      selectedStock: null,
     };
     
     // this.lineSeries = [];
@@ -39,8 +41,9 @@ class App extends React.Component {
   componentDidUpdate() {
     let { update, selectedStock } = this.state;
     if (selectedStock) {
-      let actualStock = update.filter((stock) => stock.ticker === selectedStock.ticker)
-      this.lineSeries.setData(actualStock);
+      let currentStock = update.filter((stock) => stock.ticker === selectedStock.ticker);
+      this.currentStockData = currentStock;
+      this.lineSeries.setData(this.currentStockData);
     }
   }
   
@@ -97,6 +100,12 @@ class App extends React.Component {
           }}
         />
         <div ref={this.chart} />
+        <StockTable
+          update={this.currentStockData}
+          buy={this.state.buy}
+          sell={this.state.sell}
+          stock={this.state.selectedStock}
+        />
       </div>
     );
 }

@@ -14,6 +14,12 @@ function getMax(data){
   return Math.max(...values);
 }
 
+function getMin(data){
+  let values = data.map((update) => update.value);
+  console.log(values)
+  return Math.min(...values);
+}
+
 function StockTable(props){
   const { stock, buy, sell, update } = props;
   return (
@@ -34,7 +40,7 @@ function StockTable(props){
         <TableCell component="th" scope="row">
           Bajo Histórico
         </TableCell>
-        <TableCell align="right">83</TableCell>
+        <TableCell align="right">{update ? getMin(update) : 0}</TableCell>
       </TableRow>
       <TableRow key='ultimo precio'>
         <TableCell component="th" scope="row">

@@ -46,7 +46,7 @@ function StockTable(props){
         <TableCell component="th" scope="row">
           Último precio
         </TableCell>
-        <TableCell align="right">83</TableCell>
+        <TableCell align="right">{update ? update[update.length - 1].value : 0}</TableCell>
       </TableRow>
       <TableRow key='variacion porcentual'>
         <TableCell component="th" scope="row">

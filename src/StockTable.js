@@ -10,14 +10,19 @@ function totalTradeVolume(ticker, buy, sell){
 
 function getMax(data){
   let values = data.map((update) => update.value);
-  console.log(values)
   return Math.max(...values);
 }
 
 function getMin(data){
   let values = data.map((update) => update.value);
-  console.log(values)
   return Math.min(...values);
+}
+
+function percentVariation(data){
+  let last = data[data.length - 1].value;
+  let penultimate = data[data.length - 2].value;
+  let result = (last - penultimate)/penultimate * 100;
+  return result.toFixed(4);
 }
 
 function StockTable(props){
@@ -52,7 +57,7 @@ function StockTable(props){
         <TableCell component="th" scope="row">
           Variación Porcentual
         </TableCell>
-        <TableCell align="right">83</TableCell>
+        <TableCell align="right">{update && update.length > 1 ? percentVariation(update): 0}%</TableCell>
       </TableRow>
     </Table>
     )

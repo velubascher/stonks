@@ -3,7 +3,8 @@ import './App.css';
 import io from 'socket.io-client'
 import { Autocomplete } from '@material-ui/lab';
 import { Button, TextField, Paper, Table, TableContainer, TableCell, TableRow } from '@material-ui/core'
-import StockTable from './StockTable'
+import StockTable from './components/StockTable'
+import ExchangesTable from './components/ExchangesTable'
 import { createChart } from 'lightweight-charts';
 
 
@@ -21,6 +22,7 @@ class App extends React.Component {
       stocks: [],
       // currentStockData: [],
       selectedStock: null,
+      selectedExchange: null,
     };
     
     // this.lineSeries = [];
@@ -90,7 +92,7 @@ class App extends React.Component {
         }
         {this.state.update.length && <p>{this.state.update[this.state.update.length - 1].value}</p>}
         <Autocomplete
-          id="combo-box-demo"
+          id="stock-selector"
           options={this.state.stocks}
           getOptionLabel={(option) => option.ticker}
           style={{ width: 300 }}
@@ -105,6 +107,24 @@ class App extends React.Component {
           buy={this.state.buy}
           sell={this.state.sell}
           stock={this.state.selectedStock}
+        />
+
+        <Autocomplete
+          id="exchanges-selector"
+          options={Object.keys(this.state.exchanges)}
+          style={{ width: 300 }}
+          renderInput={(params) => <TextField {...params} label="Exchanges" variant="outlined" />}
+          onChange={(event, newValue) => {
+            this.setState({selectedExchange: newValue});
+          }}
+        />
+        <ExchangesTable
+          update={this.currentStockData}
+          buy={this.state.buy}
+          sell={this.state.sell}
+          exchange={this.state.selectedExchange}
+          exchanges={this.state.exchanges}
+          stocks={this.state.stocks}
         />
       </div>
     );

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Table, TableCell, TableRow } from '@material-ui/core'
+import { Table, TableCell, TableRow, TableBody } from '@material-ui/core'
 
 
 function totalTradeVolume(ticker, buy, sell){
@@ -29,36 +29,38 @@ function StockTable(props){
   const { stock, buy, sell, update } = props;
   return (
     <Table aria-label="simple table">
-      <TableRow key='volumen total transado'>
-        <TableCell component="th" scope="row">
-          Volumen Total Transado
-        </TableCell>
-        <TableCell align="right">{stock? totalTradeVolume(stock.ticker, buy, sell): 0}</TableCell>
-      </TableRow>
-      <TableRow key='alto historico'>
-        <TableCell component="th" scope="row">
-          Alto Histórico
-        </TableCell>
-        <TableCell align="right">{update ? getMax(update) : 0}</TableCell>
-      </TableRow>
-      <TableRow key='bajo historico'>
-        <TableCell component="th" scope="row">
-          Bajo Histórico
-        </TableCell>
-        <TableCell align="right">{update ? getMin(update) : 0}</TableCell>
-      </TableRow>
-      <TableRow key='ultimo precio'>
-        <TableCell component="th" scope="row">
-          Último precio
-        </TableCell>
-        <TableCell align="right">{update ? update[update.length - 1].value : 0}</TableCell>
-      </TableRow>
-      <TableRow key='variacion porcentual'>
-        <TableCell component="th" scope="row">
-          Variación Porcentual
-        </TableCell>
-        <TableCell align="right">{update && update.length > 1 ? percentVariation(update): 0}%</TableCell>
-      </TableRow>
+      <TableBody>
+        <TableRow key='volumen total transado'>
+          <TableCell component="th" scope="row">
+            Volumen Total Transado
+          </TableCell>
+          <TableCell align="right">{stock? totalTradeVolume(stock.ticker, buy, sell): 0}</TableCell>
+        </TableRow>
+        <TableRow key='alto historico'>
+          <TableCell component="th" scope="row">
+            Alto Histórico
+          </TableCell>
+          <TableCell align="right">{update ? getMax(update) : 0}</TableCell>
+        </TableRow>
+        <TableRow key='bajo historico'>
+          <TableCell component="th" scope="row">
+            Bajo Histórico
+          </TableCell>
+          <TableCell align="right">{update ? getMin(update) : 0}</TableCell>
+        </TableRow>
+        <TableRow key='ultimo precio'>
+          <TableCell component="th" scope="row">
+            Último precio
+          </TableCell>
+          <TableCell align="right">{update ? update[update.length - 1].value : 0}</TableCell>
+        </TableRow>
+        <TableRow key='variacion porcentual'>
+          <TableCell component="th" scope="row">
+            Variación Porcentual
+          </TableCell>
+          <TableCell align="right">{update && update.length > 1 ? percentVariation(update): 0}%</TableCell>
+        </TableRow>
+      </TableBody>
     </Table>
     )
 }

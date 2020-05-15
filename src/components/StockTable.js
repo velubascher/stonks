@@ -33,7 +33,7 @@ function StockTable(props){
       <TableBody>
         <TableRow key='volumen total transado'>
           <TableCell component="th" scope="row">
-            Volumen Total Transado
+            Volumen Transado
           </TableCell>
           <TableCell align="right">{stock? totalTradeVolume(stock.ticker, buy, sell): 0}</TableCell>
         </TableRow>

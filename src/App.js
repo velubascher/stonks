@@ -118,7 +118,8 @@ class App extends React.Component {
                     </Grid>
                     <Grid item>
                       <TableContainer component={Paper} variant='outlined'>
-                        {this.state.selectedStock && this.state.selectedStock.ticker}
+                        <h4>{this.state.selectedStock && this.state.selectedStock.ticker}</h4>
+                        <p>{this.state.selectedStock && this.state.selectedStock.company_name} - {this.state.selectedStock && this.state.selectedStock.country}</p>
                         <StockTable
                           update={this.currentStockData}
                           buy={this.state.buy}

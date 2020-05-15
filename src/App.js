@@ -14,7 +14,7 @@ class App extends React.Component {
     super(props);
     this.chart = React.createRef()
     this.state = {
-      isConnected: false,
+      isConnected: true,
       update: [],
       buy: [],
       sell: [],
@@ -33,13 +33,14 @@ class App extends React.Component {
   }
   
   componentDidMount() {
+    this.connectSockets();
     const chart = createChart(this.chart.current, { width: 500, height: 400 });
-    this.lineSeries = chart.addLineSeries(); 
+    this.lineSeries = chart.addLineSeries();
   }
 
   componentDidUpdate() {
     let { update, selectedStock } = this.state;
-    if (selectedStock) {
+    if (selectedStock && update) {
       let currentStock = update.filter((stock) => stock.ticker === selectedStock.ticker);
       this.currentStockData = currentStock;
       this.lineSeries.setData(this.currentStockData);
@@ -47,9 +48,6 @@ class App extends React.Component {
   }
   
   handleConnectClick() {
-    this.socket = io('wss://le-18262636.bitzonte.com', {
-      path: '/stocks'
-    });
     this.connectSockets();
     this.setState({isConnected: true});
   }
@@ -60,6 +58,9 @@ class App extends React.Component {
   }
   
   connectSockets = () => {
+    this.socket = io('wss://le-18262636.bitzonte.com', {
+      path: '/stocks'
+    });
     this.socket.on('UPDATE', data => this.setState((prevState) => ({ update: [...prevState.update, data] })))
     this.socket.on('BUY', data => this.setState((prevState) => ({ buy: [...prevState.buy, data] })))
     this.socket.on('SELL', data => this.setState((prevState) => ({ sell: [...prevState.sell, data] })))
@@ -68,11 +69,11 @@ class App extends React.Component {
     this.socket.emit('STOCKS')
     this.socket.emit('EXCHANGES')
     this.socket.on('EXCHANGES', data => this.setState({ exchanges: data }))
-    this.socket.on('STOCKS', data => this.setState({ stocks: data }))
+    this.socket.on('STOCKS', data => this.setState({ stocks: data, selectedStock: data[0] }))
   }
 
   render() {
-    
+
     const { isConnected } = this.state;
 
     return (
@@ -102,6 +103,7 @@ class App extends React.Component {
                     <Autocomplete
                       id="stock-selector"
                       options={this.state.stocks}
+                      value={this.state.selectedStock}
                       getOptionLabel={(option) => option.ticker}
                       style={{ width: 300 }}
                       renderInput={(params) => <TextField {...params} label="Stocks" variant="outlined" />}

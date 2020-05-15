@@ -27,6 +27,7 @@ function percentVariation(data){
 
 function StockTable(props){
   const { stock, buy, sell, update } = props;
+
   return (
     <Table aria-label="simple table">
       <TableBody>
@@ -40,19 +41,19 @@ function StockTable(props){
           <TableCell component="th" scope="row">
             Alto Histórico
           </TableCell>
-          <TableCell align="right">{update ? getMax(update) : 0}</TableCell>
+          <TableCell align="right">{update && update.length > 0 ? getMax(update) : 0}</TableCell>
         </TableRow>
         <TableRow key='bajo historico'>
           <TableCell component="th" scope="row">
             Bajo Histórico
           </TableCell>
-          <TableCell align="right">{update ? getMin(update) : 0}</TableCell>
+          <TableCell align="right">{update && update.length > 0 ? getMin(update) : 0}</TableCell>
         </TableRow>
         <TableRow key='ultimo precio'>
           <TableCell component="th" scope="row">
             Último precio
           </TableCell>
-          <TableCell align="right">{update ? update[update.length - 1].value : 0}</TableCell>
+          <TableCell align="right">{update && update.length > 0 ? update[update.length - 1].value : 0}</TableCell>
         </TableRow>
         <TableRow key='variacion porcentual'>
           <TableCell component="th" scope="row">

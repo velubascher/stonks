@@ -2,7 +2,7 @@ import React from 'react';
 import './App.css';
 import io from 'socket.io-client'
 import { Autocomplete } from '@material-ui/lab';
-import { Container, Button, TextField, Paper, Grid, TableContainer } from '@material-ui/core'
+import { Container, Button, TextField, Paper, Grid, TableContainer, Divider } from '@material-ui/core'
 import StockTable from './components/StockTable'
 import ExchangesTable from './components/ExchangesTable'
 import { createChart } from 'lightweight-charts';
@@ -14,7 +14,7 @@ class App extends React.Component {
     super(props);
     this.chart = React.createRef()
     this.state = {
-      isConnected: false,
+      isConnected: true,
       update: [],
       buy: [],
       sell: [],
@@ -33,13 +33,14 @@ class App extends React.Component {
   }
   
   componentDidMount() {
-    const chart = createChart(this.chart.current, { width: 500, height: 400 });
-    this.lineSeries = chart.addLineSeries(); 
+    this.connectSockets();
+    const chart = createChart(this.chart.current, { width: 430, height: 400 });
+    this.lineSeries = chart.addLineSeries();
   }
 
   componentDidUpdate() {
     let { update, selectedStock } = this.state;
-    if (selectedStock) {
+    if (selectedStock && update) {
       let currentStock = update.filter((stock) => stock.ticker === selectedStock.ticker);
       this.currentStockData = currentStock;
       this.lineSeries.setData(this.currentStockData);
@@ -47,9 +48,6 @@ class App extends React.Component {
   }
   
   handleConnectClick() {
-    this.socket = io('wss://le-18262636.bitzonte.com', {
-      path: '/stocks'
-    });
     this.connectSockets();
     this.setState({isConnected: true});
   }
@@ -60,6 +58,9 @@ class App extends React.Component {
   }
   
   connectSockets = () => {
+    this.socket = io('wss://le-18262636.bitzonte.com', {
+      path: '/stocks'
+    });
     this.socket.on('UPDATE', data => this.setState((prevState) => ({ update: [...prevState.update, data] })))
     this.socket.on('BUY', data => this.setState((prevState) => ({ buy: [...prevState.buy, data] })))
     this.socket.on('SELL', data => this.setState((prevState) => ({ sell: [...prevState.sell, data] })))
@@ -68,18 +69,17 @@ class App extends React.Component {
     this.socket.emit('STOCKS')
     this.socket.emit('EXCHANGES')
     this.socket.on('EXCHANGES', data => this.setState({ exchanges: data }))
-    this.socket.on('STOCKS', data => this.setState({ stocks: data }))
+    this.socket.on('STOCKS', data => this.setState({ stocks: data, selectedStock: data[0] }))
   }
 
   render() {
-    
+
     const { isConnected } = this.state;
 
     return (
       <div className='App'>
-      <h2>Presionar "Conectar" para ver la información</h2>
         <Container maxWidth='lg'>
-          <Grid container direction='column' alignContent='flex-start' spacing={1}>
+          <Grid container direction='row' alignContent='flex-start' spacing={1} className='button'>
             <Grid item>
             {!isConnected ?
               <Button variant="contained" color='primary' onClick={this.handleConnectClick}>
@@ -91,17 +91,17 @@ class App extends React.Component {
               </Button>
             }
             </Grid>
-            <Grid item></Grid>
           </Grid>
           <Grid container spacing={2} justify='space-between'>
-            <Grid item>
+            <Grid item xs={8}>
               <Paper className='paper' spacing={2}>
                 <h3>Búsqueda de Stocks</h3>
-                <Grid container direction='column' spacing={5} alignContent="center">
+                <Grid container spacing={5} alignContent="center">
                   <Grid item>
                     <Autocomplete
                       id="stock-selector"
                       options={this.state.stocks}
+                      value={this.state.selectedStock}
                       getOptionLabel={(option) => option.ticker}
                       style={{ width: 300 }}
                       renderInput={(params) => <TextField {...params} label="Stocks" variant="outlined" />}
@@ -110,13 +110,15 @@ class App extends React.Component {
                       }}
                     />
                   </Grid>
-                  <Grid container justify='center'>
-                    <Grid item>
+                  <Grid container direction='row' justify='center' spacing={2}>
+                    <Grid item xs={7}>
                       <div ref={this.chart} />
                     </Grid>
-                    <Grid item>
+                    <Grid item xs={5}>
                       <TableContainer component={Paper} variant='outlined'>
-                        {this.state.selectedStock && this.state.selectedStock.ticker}
+                        <h4>{this.state.selectedStock && this.state.selectedStock.ticker}</h4>
+                        <p>{this.state.selectedStock && this.state.selectedStock.company_name} - {this.state.selectedStock && this.state.selectedStock.country}</p>
+                        <Divider/>
                         <StockTable
                           update={this.currentStockData}
                           buy={this.state.buy}
@@ -128,9 +130,8 @@ class App extends React.Component {
                   </Grid>
                 </Grid>
               </Paper>
-
             </Grid>
-            <Grid item>
+            <Grid item xs={4}>
               <Paper className='paper'>
                 <h3>Búsqueda de Exchanges</h3>
                 <Autocomplete

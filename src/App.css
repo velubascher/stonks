@@ -3,5 +3,23 @@
 }
 
 .paper {
-  padding: 40px;
+  padding-right: 40px;
+  padding-left: 40px;
+  padding-top: 10px;
+  padding-bottom: 40px;
+}
+
+.button {
+  padding-top: 20px;
+  padding-bottom: 5px;
+}
+
+h4 {
+  margin-top: 10px;
+  margin-bottom: 0px;
+}
+
+p {
+  margin-top: 0px;
+  margin-bottom: 10px;
 }
